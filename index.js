@@ -14,17 +14,17 @@ app.use(cors());
 app.use(bodyParser.json());
 
 
-//console.log(uri);
+
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
   const productCollection = client.db("eco-shop").collection("groceries");
 //   posting products to the database
   app.post('/addProduct',(req,res)=>{
-      console.log(req.body);
+     // console.log(req.body);
       const product = req.body;
       productCollection.insertOne(product)
       .then(result=>{
-          console.log('inserted count',result.insertedCount);
+          //console.log('inserted count',result.insertedCount);
           res.send(result.insertedCount>0)
       })
   })
@@ -39,7 +39,7 @@ client.connect(err => {
 // delete product
     app.delete('/deleteProduct/:id',(req,res)=>{
         const id = ObjectID(req.params.id);
-        console.log('delete ',id);
+        //console.log('delete ',id);
         productCollection.findOneAndDelete({_id:id})
          .then(documents=>{
              res.send(documents);
