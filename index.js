@@ -5,7 +5,7 @@ const cors = require('cors');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 const { MongoClient, ObjectID } = require('mongodb');
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.gt9oe.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://eco-shop:62968512@cluster0.gt9oe.mongodb.net/eco-shop?retryWrites=true&w=majority`;
 
 app.get('/',(req,res)=>{
     res.send('server side working no tension')
@@ -33,7 +33,7 @@ client.connect(err => {
      productCollection.find()
      .toArray((err,items)=>{
         //console.log(items)
-        res.send(items)
+        res.send(items);
      })
  })
 // delete product
