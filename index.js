@@ -45,7 +45,29 @@ client.connect(err => {
              res.send(documents);
          })
     })
-  
+
+    
+    
+//   update product
+    app.get('/product/:id',(req,res)=>{
+        const id = ObjectID(req.params.id);
+        console.log(id);
+        productCollection.find({_id:id})
+        .toArray((err,documents)=>{
+            res.send(documents[0]);
+        })
+    })
+    // updating
+    app.patch('/updateProduct/:id',(req,res)=>{
+        const id = ObjectID(req.params.id);
+        productCollection.updateOne({_id:id},
+            {
+                $set:{name:req.body.name,price:req.body.price,piece:req.body.piece,brand:req.body.brand,category:req.body.category,imageUrl:req.body.imageUrl}
+            })
+        .then(result=>{
+            console.log(result);
+        })
+    }) 
 });
 
 
