@@ -5,7 +5,7 @@ const cors = require('cors');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 const { MongoClient, ObjectID } = require('mongodb');
-const uri = `mongodb+srv://eco-shop:62968512@cluster0.gt9oe.mongodb.net/eco-shop?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.gt9oe.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 
 app.get('/',(req,res)=>{
     res.send('server side working no tension')
@@ -20,11 +20,11 @@ client.connect(err => {
   const productCollection = client.db("eco-shop").collection("groceries");
 //   posting products to the database
   app.post('/addProduct',(req,res)=>{
-     // console.log(req.body);
+      console.log(req.body);
       const product = req.body;
       productCollection.insertOne(product)
       .then(result=>{
-          //console.log('inserted count',result.insertedCount);
+          console.log('inserted count',result.insertedCount);
           res.send(result.insertedCount>0)
       })
   })
@@ -39,7 +39,7 @@ client.connect(err => {
 // delete product
     app.delete('/deleteProduct/:id',(req,res)=>{
         const id = ObjectID(req.params.id);
-        //console.log('delete ',id);
+        console.log('delete ',id);
         productCollection.findOneAndDelete({_id:id})
          .then(documents=>{
              res.send(documents);
