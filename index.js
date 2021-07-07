@@ -68,6 +68,53 @@ client.connect(err => {
             console.log(result);
         })
     }) 
+    app.get('/category/sanitizer',(req,res)=>{
+        productCollection.find({"category":"Hand Sanitizer"})
+        .toArray((err,documents)=>{
+            res.send(documents)
+            // console.log(documents);
+        })
+    })
+    app.get('/category/sugar',(req,res)=>{
+        productCollection.find({"category":"Sugar"})
+        .toArray((err,documents)=>{
+            res.send(documents);
+            // console.log(documents)
+        })
+    })
+    app.get('/category/spray',(req,res)=>{
+        productCollection.find({"category":"Disinfectant Spray"})
+        .toArray((err,documents)=>{
+            res.send(documents);
+            // console.log(documents)
+        })
+    })
+    app.get('/category/wash',(req,res)=>{
+        productCollection.find({"category":"Hand Wash"})
+        .toArray((err,documents)=>{
+            res.send(documents);
+            // console.log(documents)
+        })
+    })
+    app.get('/category/diaper',(req,res)=>{
+        productCollection.find({"category":"Baby Diaper"})
+        .toArray((err,documents)=>{
+            res.send(documents);
+            // console.log(documents)
+        })
+    })
+    app.get('/category/bodySpray',(req,res)=>{
+        productCollection.find({"category":"Body Spray"})
+        .toArray((err,documents)=>{
+            res.send(documents);
+            // console.log(documents)
+        })
+    })
+
+
+
+
+   
 });
 
 
