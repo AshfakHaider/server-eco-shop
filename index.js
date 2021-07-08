@@ -18,6 +18,8 @@ app.use(bodyParser.json());
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
   const productCollection = client.db("eco-shop").collection("groceries");
+  const fashionCollection = client.db("eco-shop").collection("fashion");
+  const foodCollection = client.db("eco-shop").collection("food");
 //   posting products to the database
   app.post('/addProduct',(req,res)=>{
       console.log(req.body);
@@ -28,6 +30,27 @@ client.connect(err => {
           res.send(result.insertedCount>0)
       })
   })
+
+  app.post('/addFashion',(req,res)=>{
+    console.log(req.body);
+    const fashionPd = req.body;
+    fashionCollection.insertOne(fashionPd)
+    .then(result=>{
+        console.log('inserted count',result.insertedCount);
+        res.send(result.insertedCount>0)  
+    })
+    
+})
+app.post('/addFood',(req,res)=>{
+    console.log(req.body);
+    const foodPd = req.body;
+    foodCollection.insertOne(foodPd)
+    .then(result=>{
+        console.log('inserted count',result.insertedCount);
+        res.send(result.insertedCount>0)  
+    })
+})
+
 // getting product from the database
  app.get('/products',(req,res)=>{
      productCollection.find()
@@ -36,6 +59,20 @@ client.connect(err => {
         res.send(items);
      })
  })
+ app.get('/foodProducts',(req,res)=>{
+    foodCollection.find()
+    .toArray((err,items)=>{
+       //console.log(items)
+       res.send(items);
+    })
+})
+app.get('/fashionProducts',(req,res)=>{
+    fashionCollection.find()
+    .toArray((err,items)=>{
+       //console.log(items)
+       res.send(items);
+    })
+})
 // delete product
     app.delete('/deleteProduct/:id',(req,res)=>{
         const id = ObjectID(req.params.id);
@@ -46,7 +83,20 @@ client.connect(err => {
          })
     })
 
-    
+    app.delete('/deleteFashion/:id',(req,res)=>{
+        console.log(req.params.id)
+        fashionCollection.findOneAndDelete({_id:ObjectID(req.params.id)})
+        .then(documents=>{
+            res.send(documents)
+        })
+    })
+
+   app.delete('/deleteFood/:id',(req,res)=>{
+       foodCollection.findOneAndDelete({_id:ObjectID(req.params.id)})
+       .then(documents=>{
+           res.send(documents)
+       })
+   }) 
     
 //   update product
     app.get('/product/:id',(req,res)=>{
@@ -55,6 +105,20 @@ client.connect(err => {
         productCollection.find({_id:id})
         .toArray((err,documents)=>{
             res.send(documents[0]);
+        })
+    })
+
+    app.get('/food/:id',(req,res)=>{
+        foodCollection.find({_id:ObjectID(req.params.id)})
+        .toArray((err,documents)=>{
+            res.send(documents)
+        })
+    })
+
+    app.get('/fashion/:id',(req,res)=>{
+        fashionCollection.find({_id:ObjectID(req.params.id)})
+        .toArray((err,documents)=>{
+            res.send(documents)
         })
     })
 
@@ -69,6 +133,29 @@ client.connect(err => {
             console.log(result);
         })
     }) 
+
+    app.patch('/updateFashion/:id',(req,res)=>{
+
+        fashionCollection.updateOne({_id:ObjectID(req.params.id)},
+            {
+                $set:{name:req.body.name,price:req.body.price,piece:req.body.piece,brand:req.body.brand,category:req.body.category,imageUrl:req.body.imageUrl}
+            })
+        .then(result=>{
+            console.log(result);
+        })
+    }) 
+    app.patch('/updateFood/:id',(req,res)=>{
+        foodCollection.updateOne({_id:ObjectID(req.params.id)},
+            {
+                $set:{name:req.body.name,price:req.body.price,piece:req.body.piece,brand:req.body.brand,category:req.body.category,imageUrl:req.body.imageUrl}
+            })
+        .then(result=>{
+            console.log(result);
+        })
+    }) 
+
+
+// getting similar product statically
 
     app.get('/category/sanitizer',(req,res)=>{
         productCollection.find({"category":"Hand Sanitizer"})
