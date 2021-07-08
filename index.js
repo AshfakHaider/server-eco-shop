@@ -50,13 +50,14 @@ client.connect(err => {
     
 //   update product
     app.get('/product/:id',(req,res)=>{
-        const id = ObjectID(req.params.id);
-        console.log(id);
+       const id = ObjectID(req.params.id);
+        console.log(id); 
         productCollection.find({_id:id})
         .toArray((err,documents)=>{
             res.send(documents[0]);
         })
     })
+
     // updating
     app.patch('/updateProduct/:id',(req,res)=>{
         const id = ObjectID(req.params.id);
@@ -68,6 +69,7 @@ client.connect(err => {
             console.log(result);
         })
     }) 
+
     app.get('/category/sanitizer',(req,res)=>{
         productCollection.find({"category":"Hand Sanitizer"})
         .toArray((err,documents)=>{
@@ -110,13 +112,17 @@ client.connect(err => {
             // console.log(documents)
         })
     })
-
-
-
-
-   
+    // woking function but have some re-render problem in front-end hope we will fix it
+    // app.get('/productSimilar/:id',(req,res)=>{
+    //     //console.log(req.params.id);
+    //     const category = req.params.id;
+    //     productCollection.find({"category":category})
+    //     .toArray((err,documents)=>{
+    //         console.log(documents)
+    //         res.send(documents)
+    //     })
+    // })
 });
-
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
