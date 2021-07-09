@@ -20,9 +20,20 @@ client.connect(err => {
   const productCollection = client.db("eco-shop").collection("groceries");
   const fashionCollection = client.db("eco-shop").collection("fashion");
   const foodCollection = client.db("eco-shop").collection("food");
+  const reviewCollection = client.db("eco-shop").collection("review");
 //   posting products to the database
+ app.post('/addReview',(req,res)=>{
+    //  console.log(req.body);
+     const review = req.body;
+     reviewCollection.insertOne(review)
+     .then(result=>{
+         console.log('inserted count',result.insertedCount);
+         res.send(result.insertedCount>0);
+     })
+ })
+
   app.post('/addProduct',(req,res)=>{
-      console.log(req.body);
+    //   console.log(req.body);
       const product = req.body;
       productCollection.insertOne(product)
       .then(result=>{
@@ -32,26 +43,33 @@ client.connect(err => {
   })
 
   app.post('/addFashion',(req,res)=>{
-    console.log(req.body);
+    //console.log(req.body);
     const fashionPd = req.body;
     fashionCollection.insertOne(fashionPd)
     .then(result=>{
-        console.log('inserted count',result.insertedCount);
+        // console.log('inserted count',result.insertedCount);
         res.send(result.insertedCount>0)  
     })
     
 })
 app.post('/addFood',(req,res)=>{
-    console.log(req.body);
+    //console.log(req.body);
     const foodPd = req.body;
     foodCollection.insertOne(foodPd)
     .then(result=>{
-        console.log('inserted count',result.insertedCount);
+        // console.log('inserted count',result.insertedCount);
         res.send(result.insertedCount>0)  
     })
 })
 
 // getting product from the database
+ app.get('/review',(req,res)=>{
+     reviewCollection.find()
+     .toArray((err,documents)=>{
+         //console.log(documents);
+         res.send(documents)
+     })
+ })
  app.get('/products',(req,res)=>{
      productCollection.find()
      .toArray((err,items)=>{
@@ -76,7 +94,7 @@ app.get('/fashionProducts',(req,res)=>{
 // delete product
     app.delete('/deleteProduct/:id',(req,res)=>{
         const id = ObjectID(req.params.id);
-        console.log('delete ',id);
+        // console.log('delete ',id);
         productCollection.findOneAndDelete({_id:id})
          .then(documents=>{
              res.send(documents);
@@ -84,7 +102,7 @@ app.get('/fashionProducts',(req,res)=>{
     })
 
     app.delete('/deleteFashion/:id',(req,res)=>{
-        console.log(req.params.id)
+        // console.log(req.params.id)
         fashionCollection.findOneAndDelete({_id:ObjectID(req.params.id)})
         .then(documents=>{
             res.send(documents)
@@ -101,7 +119,7 @@ app.get('/fashionProducts',(req,res)=>{
 //   update product
     app.get('/product/:id',(req,res)=>{
        const id = ObjectID(req.params.id);
-        console.log(id); 
+        // console.log(id); 
         productCollection.find({_id:id})
         .toArray((err,documents)=>{
             res.send(documents[0]);
@@ -150,7 +168,7 @@ app.get('/fashionProducts',(req,res)=>{
                 $set:{name:req.body.name,price:req.body.price,piece:req.body.piece,brand:req.body.brand,category:req.body.category,imageUrl:req.body.imageUrl}
             })
         .then(result=>{
-            console.log(result);
+            // console.log(result);
         })
     }) 
 
