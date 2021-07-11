@@ -92,6 +92,13 @@ app.get('/fashionProducts',(req,res)=>{
     })
 })
 // delete product
+    app.delete('/deleteReview/:id',(req,res)=>{
+        //console.log(req.params.id);
+        reviewCollection.findOneAndDelete({_id:ObjectID(req.params.id)})
+        .then(documents=>{
+            res.send(documents)
+        })
+    })
     app.delete('/deleteProduct/:id',(req,res)=>{
         const id = ObjectID(req.params.id);
         // console.log('delete ',id);
