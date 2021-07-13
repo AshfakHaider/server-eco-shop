@@ -102,7 +102,7 @@ client.connect(err => {
             })
     })
     app.get('/foodProducts', (req, res) => {
-        productCollection.filter({"category":"Food"})
+        productCollection.find({"category":"Food"})
             .toArray((err, items) => {
                 console.log(items)
                 res.send(items);
