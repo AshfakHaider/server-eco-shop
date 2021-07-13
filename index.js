@@ -18,8 +18,6 @@ app.use(bodyParser.json());
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
     const productCollection = client.db("eco-shop").collection("groceries");
-    const fashionCollection = client.db("eco-shop").collection("fashion");
-    const foodCollection = client.db("eco-shop").collection("food");
     const reviewCollection = client.db("eco-shop").collection("review");
     const topProductCollection = client.db("eco-shop").collection("top-product");
     //   posting products to the database
@@ -53,9 +51,9 @@ client.connect(err => {
     })
 
     app.post('/addFashion', (req, res) => {
-        //console.log(req.body);
+        console.log(req.body);
         const fashionPd = req.body;
-        fashionCollection.insertOne(fashionPd)
+        productCollection.insertOne(fashionPd)
             .then(result => {
                 // console.log('inserted count',result.insertedCount);
                 res.send(result.insertedCount > 0)
@@ -65,7 +63,7 @@ client.connect(err => {
     app.post('/addFood', (req, res) => {
         //console.log(req.body);
         const foodPd = req.body;
-        foodCollection.insertOne(foodPd)
+        productCollection.insertOne(foodPd)
             .then(result => {
                 // console.log('inserted count',result.insertedCount);
                 res.send(result.insertedCount > 0)
@@ -73,6 +71,15 @@ client.connect(err => {
     })
 
     // getting product from the database
+    app.get('/searchPd/:id',(req,res)=>{
+        console.log(req.params.id);
+        productCollection.find({"category":req.params.id})
+        .toArray((err,documents)=>{
+            console.log(documents);
+            res.send(documents);
+        })
+    })
+
     app.get('/topProduct',(req,res)=>{
         topProductCollection.find()
         .toArray((err,documents)=>{
@@ -81,7 +88,7 @@ client.connect(err => {
         })
     })
     app.get('/review', (req, res) => {
-        reviewCollection.find()
+        productCollection.find()
             .toArray((err, documents) => {
                 //console.log(documents);
                 res.send(documents)
@@ -95,14 +102,14 @@ client.connect(err => {
             })
     })
     app.get('/foodProducts', (req, res) => {
-        foodCollection.find()
+        productCollection.find({"category":"Food"})
             .toArray((err, items) => {
                 //console.log(items)
                 res.send(items);
             })
     })
     app.get('/fashionProducts', (req, res) => {
-        fashionCollection.find()
+        productCollection.find({"category":"Fashion"})
             .toArray((err, items) => {
                 //console.log(items)
                 res.send(items);
@@ -127,14 +134,14 @@ client.connect(err => {
 
     app.delete('/deleteFashion/:id', (req, res) => {
         // console.log(req.params.id)
-        fashionCollection.findOneAndDelete({ _id: ObjectID(req.params.id) })
+        productCollection.findOneAndDelete({ _id: ObjectID(req.params.id) })
             .then(documents => {
                 res.send(documents)
             })
     })
 
     app.delete('/deleteFood/:id', (req, res) => {
-        foodCollection.findOneAndDelete({ _id: ObjectID(req.params.id) })
+        productCollection.findOneAndDelete({ _id: ObjectID(req.params.id) })
             .then(documents => {
                 res.send(documents)
             })
@@ -151,14 +158,14 @@ client.connect(err => {
     })
 
     app.get('/food/:id', (req, res) => {
-        foodCollection.find({ _id: ObjectID(req.params.id) })
+        productCollection.find({ _id: ObjectID(req.params.id) })
             .toArray((err, documents) => {
                 res.send(documents)
             })
     })
 
     app.get('/fashion/:id', (req, res) => {
-        fashionCollection.find({ _id: ObjectID(req.params.id) })
+        productCollection.find({ _id: ObjectID(req.params.id) })
             .toArray((err, documents) => {
                 res.send(documents)
             })
@@ -179,7 +186,7 @@ client.connect(err => {
     app.patch('/updateFashion/:id', (req, res) => {
         console.log(req.params.id);
 
-        fashionCollection.updateOne({ _id: ObjectID(req.params.id) },
+        productCollection.updateOne({ _id: ObjectID(req.params.id) },
             {
                 $set: { name: req.body.name, price: req.body.price, piece: req.body.piece, brand: req.body.brand, category: req.body.category, imageUrl: req.body.imageUrl }
             })
@@ -188,7 +195,7 @@ client.connect(err => {
             })
     })
     app.patch('/updateFood/:id', (req, res) => {
-        foodCollection.updateOne({ _id: ObjectID(req.params.id) },
+        productCollection.updateOne({ _id: ObjectID(req.params.id) },
             {
                 $set: { name: req.body.name, price: req.body.price, piece: req.body.piece, brand: req.body.brand, category: req.body.category, imageUrl: req.body.imageUrl }
             })
@@ -257,3 +264,6 @@ client.connect(err => {
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })
+
+
+
