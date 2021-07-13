@@ -2,9 +2,11 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser')
 const cors = require('cors');
+const { request } = require("express");
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 const { MongoClient, ObjectID } = require('mongodb');
+const { response } = require('express');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.gt9oe.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 
 app.get('/', (req, res) => {
@@ -71,14 +73,40 @@ client.connect(err => {
     })
 
     // getting product from the database
-    app.get('/searchPd/:id',(req,res)=>{
-        console.log(req.params.id);
-        productCollection.find({"category":req.params.id})
-        .toArray((err,documents)=>{
-            console.log(documents);
-            res.send(documents);
-        })
-    })
+
+    app.get('/search',  (req,res)=>{
+          productCollection.aggregate([
+                {
+                  '$search': {
+                    'index': 'default',
+                    'text': {
+                      'query': `${req.query.query}`,
+                      'path': {
+                        'wildcard': '*'
+                      }
+                    }
+                  }
+                }
+              ]            )
+            .toArray((err,document)=>{
+                res.send(document)
+                //console.log(document)
+            });
+          
+        }
+
+    )
+
+
+    
+    // app.get('/searchPd/:id',(req,res)=>{
+    //     console.log(req.params.id);
+    //     productCollection.find({"category":req.params.id})
+    //     .toArray((err,documents)=>{
+    //         console.log(documents);
+    //         res.send(documents);
+    //     })
+    // })
 
     app.get('/topProduct',(req,res)=>{
         topProductCollection.find()
@@ -88,7 +116,7 @@ client.connect(err => {
         })
     })
     app.get('/review', (req, res) => {
-        productCollection.find()
+        reviewCollection.find()
             .toArray((err, documents) => {
                 //console.log(documents);
                 res.send(documents)
