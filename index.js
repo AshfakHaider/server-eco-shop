@@ -22,15 +22,23 @@ client.connect(err => {
     const productCollection = client.db("eco-shop").collection("groceries");
     const reviewCollection = client.db("eco-shop").collection("review");
     const topProductCollection = client.db("eco-shop").collection("top-product");
+    const adminCollection = client.db("eco-shop").collection("admin");
+
     //   posting products to the database
 
+    app.post('/addAdmin', (req, res) => {
+        const newAdmin = req.body;
+        console.log('admin', newAdmin);
+        adminCollection.insertOne(newAdmin)
+
+    })
     app.post('/addTop', (req, res) => {
         //console.log(req.body);
         topProductCollection.insertOne(req.body)
-        .then(result=>{
-            console.log('inserted count',result.insertedCount)
-            res.send(result.insertedCount>0)
-        })
+            .then(result => {
+                console.log('inserted count', result.insertedCount)
+                res.send(result.insertedCount > 0)
+            })
     })
     app.post('/addReview', (req, res) => {
         //  console.log(req.body);
@@ -74,31 +82,31 @@ client.connect(err => {
 
     // getting product from the database
 
-    app.get('/search',  (req,res)=>{
-          productCollection.aggregate([
-                {
-                  '$search': {
+    app.get('/search', (req, res) => {
+        productCollection.aggregate([
+            {
+                '$search': {
                     'index': 'default',
                     'text': {
-                      'query': `${req.query.query}`,
-                      'path': {
-                        'wildcard': '*'
-                      }
+                        'query': `${req.query.query}`,
+                        'path': {
+                            'wildcard': '*'
+                        }
                     }
-                  }
                 }
-              ]            )
-            .toArray((err,document)=>{
+            }
+        ])
+            .toArray((err, document) => {
                 res.send(document)
                 //console.log(document)
             });
-          
-        }
+
+    }
 
     )
 
 
-    
+
     // app.get('/searchPd/:id',(req,res)=>{
     //     console.log(req.params.id);
     //     productCollection.find({"category":req.params.id})
@@ -108,12 +116,22 @@ client.connect(err => {
     //     })
     // })
 
-    app.get('/topProduct',(req,res)=>{
+    app.get('/admin', (req, res) => {
+        // console.log(req.query.email)
+        adminCollection.find()
+            .toArray((err, items) => {
+                res.send(items)
+                console.log('fro db', items);
+            })
+    })
+
+
+    app.get('/topProduct', (req, res) => {
         topProductCollection.find()
-        .toArray((err,documents)=>{
-            res.send(documents)
-            //console.log(documents)
-        })
+            .toArray((err, documents) => {
+                res.send(documents)
+                //console.log(documents)
+            })
     })
     app.get('/review', (req, res) => {
         reviewCollection.find()
@@ -130,14 +148,14 @@ client.connect(err => {
             })
     })
     app.get('/food', (req, res) => {
-        productCollection.find({"category":"Food"})
+        productCollection.find({ "category": "Food" })
             .toArray((err, items) => {
                 console.log(items)
                 res.send(items);
             })
     })
     app.get('/fashion', (req, res) => {
-        productCollection.find({"category":"Fashion"})
+        productCollection.find({ "category": "Fashion" })
             .toArray((err, items) => {
                 //console.log(items)
                 res.send(items);
@@ -235,48 +253,48 @@ client.connect(err => {
 
     // getting similar product statically
 
-    app.get('/category/sanitizer', (req, res) => {
-        productCollection.find({ "category": "Hand Sanitizer" })
-            .toArray((err, documents) => {
-                res.send(documents)
-                // console.log(documents);
-            })
-    })
-    app.get('/category/sugar', (req, res) => {
-        productCollection.find({ "category": "Sugar" })
-            .toArray((err, documents) => {
-                res.send(documents);
-                // console.log(documents)
-            })
-    })
-    app.get('/category/spray', (req, res) => {
-        productCollection.find({ "category": "Disinfectant Spray" })
-            .toArray((err, documents) => {
-                res.send(documents);
-                // console.log(documents)
-            })
-    })
-    app.get('/category/wash', (req, res) => {
-        productCollection.find({ "category": "Hand Wash" })
-            .toArray((err, documents) => {
-                res.send(documents);
-                // console.log(documents)
-            })
-    })
-    app.get('/category/diaper', (req, res) => {
-        productCollection.find({ "category": "Baby Diaper" })
-            .toArray((err, documents) => {
-                res.send(documents);
-                // console.log(documents)
-            })
-    })
-    app.get('/category/bodySpray', (req, res) => {
-        productCollection.find({ "category": "Body Spray" })
-            .toArray((err, documents) => {
-                res.send(documents);
-                // console.log(documents)
-            })
-    })
+    // app.get('/category/sanitizer', (req, res) => {
+    //     productCollection.find({ "category": "Hand Sanitizer" })
+    //         .toArray((err, documents) => {
+    //             res.send(documents)
+    //             // console.log(documents);
+    //         })
+    // })
+    // app.get('/category/sugar', (req, res) => {
+    //     productCollection.find({ "category": "Sugar" })
+    //         .toArray((err, documents) => {
+    //             res.send(documents);
+    //             // console.log(documents)
+    //         })
+    // })
+    // app.get('/category/spray', (req, res) => {
+    //     productCollection.find({ "category": "Disinfectant Spray" })
+    //         .toArray((err, documents) => {
+    //             res.send(documents);
+    //             // console.log(documents)
+    //         })
+    // })
+    // app.get('/category/wash', (req, res) => {
+    //     productCollection.find({ "category": "Hand Wash" })
+    //         .toArray((err, documents) => {
+    //             res.send(documents);
+    //             // console.log(documents)
+    //         })
+    // })
+    // app.get('/category/diaper', (req, res) => {
+    //     productCollection.find({ "category": "Baby Diaper" })
+    //         .toArray((err, documents) => {
+    //             res.send(documents);
+    //             // console.log(documents)
+    //         })
+    // })
+    // app.get('/category/bodySpray', (req, res) => {
+    //     productCollection.find({ "category": "Body Spray" })
+    //         .toArray((err, documents) => {
+    //             res.send(documents);
+    //             // console.log(documents)
+    //         })
+    // })
     // woking function but have some re-render problem in front-end hope we will fix it
     // app.get('/productSimilar/:id',(req,res)=>{
     //     //console.log(req.params.id);
@@ -292,6 +310,8 @@ client.connect(err => {
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })
+
+
 
 
 
