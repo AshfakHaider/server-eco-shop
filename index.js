@@ -208,6 +208,13 @@ client.connect(err => {
                 res.send(documents)
             })
     })
+    
+    app.delete('/deleteOrder/:id', (req, res) => {
+        orderCollection.findOneAndDelete({ _id: ObjectID(req.params.id) })
+            .then(documents => {
+                res.send(documents)
+            })
+    })
 
     //   update product
     app.get('/product/:id', (req, res) => {
