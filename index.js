@@ -23,8 +23,18 @@ client.connect(err => {
     const reviewCollection = client.db("eco-shop").collection("review");
     const topProductCollection = client.db("eco-shop").collection("top-product");
     const adminCollection = client.db("eco-shop").collection("admin");
+    const orderCollection = client.db("eco-shop").collection("orders");
 
     //   posting products to the database
+    
+    app.post('/addOrder',(req,res)=>{
+        const newOrder = req.body;
+        orderCollection.insertOne(newOrder)
+        .then(result=>{
+            console.log('new order on board')
+            res.send(result);
+        }) 
+    })
 
     app.post('/addAdmin', (req, res) => {
         const newAdmin = req.body;
@@ -81,6 +91,13 @@ client.connect(err => {
     })
 
     // getting product from the database
+    app.get('/orders',(req,res)=>{
+        orderCollection.find()
+        .toArray((err,documents)=>{
+            res.send(documents)
+            console.log(documents);
+        })
+    })
 
     app.get('/search', (req, res) => {
         productCollection.aggregate([
@@ -102,7 +119,6 @@ client.connect(err => {
             });
 
     }
-
     )
 
 
